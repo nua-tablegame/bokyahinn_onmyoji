@@ -94,23 +94,8 @@ footer img { max-width:160px; height:auto; display:inline-block; }
 
   // ===== 管理者ページへのリダイレクト機能 =====
   const SECRET_KEY = 'nua9499';
-  const query = window.location.search;
-  const hash = window.location.hash;
-  let goAdmin = false;
-
-  if(query === '?' + SECRET_KEY) {
-    goAdmin = true;
-  } else {
-    try {
-      const params = new URLSearchParams(query);
-      for(const val of params.values()){
-        if(val === SECRET_KEY){ goAdmin = true; break; }
-      }
-    } catch(e){}
-  }
-  if(hash === '#' + SECRET_KEY){ goAdmin = true; }
-
-  if(goAdmin){
+  const url = new URL(window.location.href);
+  if(url.search === '?' + SECRET_KEY || url.hash === '#' + SECRET_KEY){
     window.location.href = 'admin.html?' + encodeURIComponent(SECRET_KEY);
   }
 })();
