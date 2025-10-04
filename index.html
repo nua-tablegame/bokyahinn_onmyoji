@@ -121,13 +121,40 @@ footer img { max-width:160px; height:auto; display:inline-block; }
 @media (max-width:420px){
   .card img { max-width:100%; }
 }
-  /* スマホ（幅768px以下）の場合だけ全体を50%縮小 */
+
+/* スマホ用レイアウト調整 */
 @media (max-width: 768px) {
   body {
-    transform: scale(0.5);
-    transform-origin: top left;
-    width: 200%;
-    height: 100%;
+    font-size: 0.8rem; /* 全体の文字を小さく */
+    line-height: 1.4;
+  }
+
+  h2, h3 {
+    font-size: 1rem; /* 見出しも少し小さく */
+  }
+
+  .card {
+    width: 90%;         /* 横幅をデバイス幅に合わせる */
+    margin: 8px auto;   /* スマホでは中央寄せ */
+    padding: 6px;
+  }
+
+  .card img {
+    width: 100%;        /* カード画像を枠いっぱい */
+    height: auto;       /* 縦横比を維持 */
+  }
+
+  .card-desc {
+    font-size: 0.7rem;  /* 説明文を読みやすい小ささに */
+  }
+
+  .memo {
+    font-size: 0.7rem;
+    padding: 4px;
+  }
+
+  #selected-area {
+    padding: 8px;
   }
 }
   
@@ -231,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
