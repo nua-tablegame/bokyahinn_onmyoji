@@ -36,17 +36,25 @@ body.medium .card-desc { font-size:1rem; }
 body.large .card img { width:160px; }
 body.large .card-desc { font-size:1.2rem; }
 
-header { text-align:center; padding:20px 10px 10px; }
+header {
+  text-align: center;
+  padding: 8px 10px; /* 上下を小さめに */
+}
+
+h2 {
+  margin: 10px 0;   /* 怪異一覧の見出しの余白も調整 */
+}
+
 /* PC用 */
 header img {
-  max-width: 800px;
+  max-width: 600px;
   height: auto;
 }
 
 /* スマホ用（幅768px以下のときだけ小さく） */
 @media (max-width: 768px) {
   header img {
-    max-width: 500px;
+    max-width: 400px;
   }
 }
 
@@ -270,6 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
