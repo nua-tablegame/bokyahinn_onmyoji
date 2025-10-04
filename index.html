@@ -5,7 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>怪異一覧ページ</title>
 <style>
-:root { --card-bg:#fff; --accent:#c62828; }
+:root {
+  --card-bg:#fff;
+  --accent:#c62828;
+
+  /* ===== メモ用のカスタマイズ変数 ===== */
+  --memo-bg:#fdf6e3;   /* メモ背景色 */
+  --memo-color:#333;   /* メモ文字色 */
+  --memo-font:1rem;    /* メモ文字サイズ */
+  --memo-height:120px; /* メモ高さ */
+}
+
+/* 全体レイアウト */
 *{box-sizing:border-box;}
 body {
   font-family: system-ui, -apple-system, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
@@ -14,91 +25,200 @@ body {
   background-size: cover;
   color:#111;
 }
+
+/* サイズ切替: body の class を small / medium / large にする */
+body.small .card img { width:80px; }
+body.small .card-desc { font-size:0.8rem; }
+
+body.medium .card img { width:120px; }
+body.medium .card-desc { font-size:1rem; }
+
+body.large .card img { width:160px; }
+body.large .card-desc { font-size:1.2rem; }
+
 header { text-align:center; padding:20px 10px 10px; }
 header img { max-width:320px; height:auto; display:inline-block; }
 main { padding: 0 12px 40px; }
 h2 { text-align:center; margin:14px 0; font-size:1.25rem; }
+
 .cards { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin:0 auto; max-width:1100px; }
-.card { width:120px; cursor:pointer; border:2px solid transparent; padding:6px; background:var(--card-bg); border-radius:8px; transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease; box-shadow:0 1px 3px rgba(0,0,0,0.06); text-align:center; user-select:none; }
+.card {
+  display:flex;
+  flex-direction:column;
+  width:auto;
+  max-width:240px;
+  cursor:pointer;
+  border:2px solid transparent;
+  padding:6px;
+  background:var(--card-bg);
+  border-radius:8px;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);
+  user-select:none;
+}
 .card:hover { transform:translateY(-4px); box-shadow:0 6px 18px rgba(0,0,0,0.08); }
-.card.selected { border-color: var(--accent); box-shadow:0 10px 30px rgba(198,40,40,0.12); transform:translateY(-6px) scale(1.02); }
-.card img { width:100%; height:auto; display:block; border-radius:6px; }
-.card-name { margin-top:6px; font-size:0.95rem; line-height:1.1; }
-.candidate-wrap { display:flex; justify-content:center; margin-top:26px; padding:16px; }
-.candidate { padding:14px; border-top:2px solid #333; background:var(--card-bg); border-radius:8px; min-width:180px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-.candidate img { border-radius:6px; max-width:120px; height:auto; opacity:0; transform:translateY(10px); transition: opacity 0.3s ease, transform 0.3s ease; }
-.candidate img.fade-in { opacity:1; transform:translateY(0); }
+.card img { display:block; border-radius:6px; margin:0 auto; }
+.card-desc { margin-top:6px; padding:4px; text-align:left; }
+
+/* 選択状態 */
+.card.selected {
+  border-color: var(--accent);
+  box-shadow:0 0 10px rgba(198,40,40,0.4);
+}
+
+/* 選択中エリア */
+#selected-area {
+  max-width:900px;
+  margin:0 auto 20px;
+  padding:10px;
+  border:2px dashed #999;
+  border-radius:6px;
+  background:#fafafa;
+}
+#selected-list {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+}
+.selected-card {
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:6px;
+  background:#fff;
+  width:160px;
+  text-align:center;
+}
+.selected-card img {
+  max-width:100%;
+  height:auto;
+  border-radius:6px;
+}
+.selected-card p {
+  font-size:0.9rem;
+  margin:4px 0 0;
+}
+
+/* プレイヤーメモ */
+.player-memo {
+  display:block;
+  width:90%;
+  margin:20px auto;
+  padding:8px;
+  border:1px solid #aaa;
+  border-radius:6px;
+  resize:vertical;
+  font-size:var(--memo-font);
+  background:var(--memo-bg);
+  color:var(--memo-color);
+  height:var(--memo-height);
+}
+
+/* フッター */
 footer { text-align:center; padding:18px 10px; }
 footer img { max-width:160px; height:auto; display:inline-block; }
-@media (max-width:420px){ .card { width:94px; } .card img { border-radius:6px; } }
+
+@media (max-width:420px){
+  .card img { max-width:100%; }
+}
 </style>
 </head>
-<body>
+<body class="medium"><!-- ← ここを small / medium / large に変更 -->
+
 <header>
+  <!-- タイトルロゴ：差し替え可 -->
   <img src="images/bokyahinn_title.png" alt="タイトルロゴ">
 </header>
+
 <main>
-<h2>怪異一覧</h2>
-<div class="cards" id="cards"></div>
-<div class="candidate-wrap">
-  <div class="candidate" id="candidate">
-    <h3>怪異候補</h3>
-    <p>選択したカードがここに表示されます</p>
+  <!-- 表示テキストは直接編集可能 -->
+  <h2>怪異一覧</h2>
+
+  <!-- 選択した怪異を表示するエリア -->
+  <section id="selected-area">
+    <h3 style="text-align:center;margin:6px 0;font-size:1rem;">選択中の怪異</h3>
+    <div id="selected-list"></div>
+  </section>
+
+  <div class="cards">
+    <!-- ▼ 怪異カード01〜30 -->
+    <div class="card"><img src="images/bokyahinn_image_01.png" alt="怪異1"><div class="card-desc">怪異1の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_02.png" alt="怪異2"><div class="card-desc">怪異2の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_03.png" alt="怪異3"><div class="card-desc">怪異3の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_04.png" alt="怪異4"><div class="card-desc">怪異4の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_05.png" alt="怪異5"><div class="card-desc">怪異5の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_06.png" alt="怪異6"><div class="card-desc">怪異6の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_07.png" alt="怪異7"><div class="card-desc">怪異7の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_08.png" alt="怪異8"><div class="card-desc">怪異8の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_09.png" alt="怪異9"><div class="card-desc">怪異9の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_10.png" alt="怪異10"><div class="card-desc">怪異10の説明文をここに書いてください。</div></div>
+
+    <div class="card"><img src="images/bokyahinn_image_11.png" alt="怪異11"><div class="card-desc">怪異11の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_12.png" alt="怪異12"><div class="card-desc">怪異12の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_13.png" alt="怪異13"><div class="card-desc">怪異13の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_14.png" alt="怪異14"><div class="card-desc">怪異14の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_15.png" alt="怪異15"><div class="card-desc">怪異15の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_16.png" alt="怪異16"><div class="card-desc">怪異16の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_17.png" alt="怪異17"><div class="card-desc">怪異17の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_18.png" alt="怪異18"><div class="card-desc">怪異18の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_19.png" alt="怪異19"><div class="card-desc">怪異19の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_20.png" alt="怪異20"><div class="card-desc">怪異20の説明文をここに書いてください。</div></div>
+
+    <div class="card"><img src="images/bokyahinn_image_21.png" alt="怪異21"><div class="card-desc">怪異21の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_22.png" alt="怪異22"><div class="card-desc">怪異22の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_23.png" alt="怪異23"><div class="card-desc">怪異23の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_24.png" alt="怪異24"><div class="card-desc">怪異24の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_25.png" alt="怪異25"><div class="card-desc">怪異25の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_26.png" alt="怪異26"><div class="card-desc">怪異26の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_27.png" alt="怪異27"><div class="card-desc">怪異27の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_28.png" alt="怪異28"><div class="card-desc">怪異28の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_29.png" alt="怪異29"><div class="card-desc">怪異29の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_30.png" alt="怪異30"><div class="card-desc">怪異30の説明文をここに書いてください。</div></div>
   </div>
-</div>
+
+  <!-- プレイヤー用メモ欄 -->
+  <h3 style="text-align:center; margin-top:30px;">プレイヤー用メモ</h3>
+  <textarea class="player-memo" placeholder="自由にメモを書いてください"></textarea>
 </main>
+
 <footer>
+  <!-- 製作者ロゴ：差し替え可 -->
   <img src="images/bokyahinn_logo.png" alt="制作者ロゴ">
 </footer>
+
 <script>
-(function(){
-  const container=document.getElementById('cards');
-  const candidate=document.getElementById('candidate');
+document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".card");
+  const selectedList = document.getElementById("selected-list");
 
-  // カード生成（01～29）
-  for(let i=1;i<=29;i++){
-    const div=document.createElement('div');
-    div.className='card';
-    div.dataset.name='怪異'+i;
-    const imgNumber=String(i).padStart(2,'0');
-    div.innerHTML=`<img src="images/bokyahinn_image_${imgNumber}.png" alt="怪異${i}"><div class="card-name">怪異${i}</div>`;
-    container.appendChild(div);
-  }
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      const img = card.querySelector("img");
+      const desc = card.querySelector(".card-desc").innerText;
+      const title = img.alt;
 
-  let selectedCards=[];
-  function updateCandidateDisplay(){
-    candidate.innerHTML='<h3>怪異候補</h3>';
-    if(selectedCards.length===0){
-      candidate.innerHTML+='<p>選択したカードがここに表示されます</p>';
-      return;
-    }
-    selectedCards.forEach(card=>{
-      const imgSrc=card.querySelector('img').src;
-      const name=card.dataset.name||'';
-      const div=document.createElement('div');
-      div.innerHTML=`<img src="${imgSrc}" alt="${name}"><div style="font-weight:600;margin-top:6px;">${name}</div>`;
-      candidate.appendChild(div);
-      const imgElem=div.querySelector('img');
-      setTimeout(()=>{ imgElem.classList.add('fade-in'); },20);
+      if(card.classList.contains("selected")){
+        // 選択解除
+        card.classList.remove("selected");
+        const removeTarget = selectedList.querySelector(`[data-title="${title}"]`);
+        if(removeTarget) removeTarget.remove();
+      }else{
+        // 選択追加
+        card.classList.add("selected");
+        const selectedCard = document.createElement("div");
+        selectedCard.classList.add("selected-card");
+        selectedCard.dataset.title = title;
+        selectedCard.innerHTML = `
+          <img src="${img.src}" alt="${title}">
+          <p><strong>${title}</strong></p>
+          <p>${desc}</p>
+        `;
+        selectedList.appendChild(selectedCard);
+      }
     });
-  }
-
-  container.addEventListener('click',(ev)=>{
-    const card=ev.target.closest('.card');
-    if(!card) return;
-    const idx=selectedCards.indexOf(card);
-    if(idx===-1){ selectedCards.push(card); card.classList.add('selected'); }
-    else { selectedCards.splice(idx,1); card.classList.remove('selected'); }
-    updateCandidateDisplay();
   });
-
-  // ===== 管理者ページへのリダイレクト機能 =====
-  const SECRET_KEY = 'nua9499';
-  const url = new URL(window.location.href);
-  if(url.search === '?' + SECRET_KEY || url.hash === '#' + SECRET_KEY){
-    window.location.href = 'admin.html?' + encodeURIComponent(SECRET_KEY);
-  }
-})();
+});
 </script>
+
 </body>
 </html>
