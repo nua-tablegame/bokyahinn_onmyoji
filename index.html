@@ -37,7 +37,19 @@ body.large .card img { width:160px; }
 body.large .card-desc { font-size:1.2rem; }
 
 header { text-align:center; padding:20px 10px 10px; }
-header img { max-width:320px; height:auto; display:inline-block; }
+/* PC用 */
+header img {
+  max-width: 500px;
+  height: auto;
+}
+
+/* スマホ用（幅768px以下のときだけ小さく） */
+@media (max-width: 768px) {
+  header img {
+    max-width: 300px;
+  }
+}
+
 main { padding: 0 12px 40px; }
 h2 { text-align:center; margin:14px 0; font-size:1.25rem; }
 
@@ -258,6 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
