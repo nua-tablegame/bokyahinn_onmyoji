@@ -230,6 +230,7 @@ footer img { max-width:160px; height:auto; display:inline-block; }
     <div class="card"><img src="images/bokyahinn_image_27.png" alt="怪異27"><div class="card-desc">怪異27の説明文をここに書いてください。</div></div>
     <div class="card"><img src="images/bokyahinn_image_28.png" alt="怪異28"><div class="card-desc">怪異28の説明文をここに書いてください。</div></div>
     <div class="card"><img src="images/bokyahinn_image_29.png" alt="怪異29"><div class="card-desc">怪異29の説明文をここに書いてください。</div></div>
+    <div class="card"><img src="images/bokyahinn_image_30.png" alt="怪異30"><div class="card-desc">怪異30の説明文をここに書いてください。</div></div>
   </div>
 
   <!-- プレイヤー用メモ欄 -->
@@ -274,10 +275,107 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+  // --- 30枚目カードにユーザー編集機能を付与 ---
+document.addEventListener('DOMContentLoaded', () => {
+  const card30 = document.querySelector('.card[data-name="怪異30"]');
+
+  if (!card30) return;
+
+  // 保存済み画像とメモをロード
+  const savedImg = localStorage.getItem('card30_image');
+  const savedNote = localStorage.getItem('card30_note');
+  if (savedImg) card30.querySelector('img').src = savedImg;
+  if (savedNote) addNoteToCard(card30, savedNote);
+
+  // コンテキストメニューを生成
+  const menu = document.createElement('div');
+  menu.id = 'customMenu';
+  menu.style.position = 'fixed';
+  menu.style.background = '#fff';
+  menu.style.border = '1px solid #ccc';
+  menu.style.borderRadius = '6px';
+  menu.style.padding = '6px';
+  menu.style.display = 'none';
+  menu.style.zIndex = '9999';
+  menu.innerHTML = `
+    <button id="changeImgBtn">📷 画像を変更</button><br>
+    <button id="changeNoteBtn">📝 メモを変更</button>
+  `;
+  document.body.appendChild(menu);
+
+  const showMenu = (e) => {
+    e.preventDefault();
+    menu.style.display = 'block';
+    menu.style.left = e.pageX + 'px';
+    menu.style.top = e.pageY + 'px';
+  };
+
+  const hideMenu = () => (menu.style.display = 'none');
+
+  // PC右クリック／スマホ長押し対応
+  card30.addEventListener('contextmenu', showMenu);
+  let touchTimer;
+  card30.addEventListener('touchstart', (e) => {
+    touchTimer = setTimeout(() => showMenu(e.touches[0]), 600);
+  });
+  card30.addEventListener('touchend', () => clearTimeout(touchTimer));
+
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) hideMenu();
+  });
+
+  // 画像変更
+  document.getElementById('changeImgBtn').addEventListener('click', () => {
+    hideMenu();
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (ev) => {
+      const file = ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imgData = event.target.result;
+        card30.querySelector('img').src = imgData;
+        localStorage.setItem('card30_image', imgData);
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  });
+
+  // メモ変更
+  document.getElementById('changeNoteBtn').addEventListener('click', () => {
+    hideMenu();
+    const currentNote = localStorage.getItem('card30_note') || '';
+    const newNote = prompt('メモを入力してください：', currentNote);
+    if (newNote !== null) {
+      localStorage.setItem('card30_note', newNote);
+      addNoteToCard(card30, newNote);
+    }
+  });
+
+  function addNoteToCard(card, note) {
+    let noteElem = card.querySelector('.player-note');
+    if (!noteElem) {
+      noteElem = document.createElement('div');
+      noteElem.className = 'player-note';
+      noteElem.style.fontSize = '0.8rem';
+      noteElem.style.marginTop = '4px';
+      noteElem.style.padding = '4px';
+      noteElem.style.borderRadius = '4px';
+      noteElem.style.background = '#fff8e1';
+      noteElem.style.color = '#333';
+      card.appendChild(noteElem);
+    }
+    noteElem.textContent = note;
+  }
+});
 </script>
 
 </body>
 </html>
+
 
 
 
