@@ -179,6 +179,24 @@ footer img { max-width:160px; height:auto; display:inline-block; }
   }
 }
   
+  #edit-controls button {
+  padding: 14px 24px;   /* 内側余白を大きめにして高さUP */
+  font-size: 1.2rem;    /* 文字も大きめ */
+  margin: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* スマホ専用（幅768px以下のとき） */
+@media (max-width: 768px) {
+  #edit-controls button {
+    padding: 18px 28px;  /* さらに押しやすいサイズ */
+    font-size: 1.3rem;
+    width: 90%;          /* 横幅を広げるとタップしやすい */
+    max-width: 320px;    /* 大きすぎ防止 */
+  }
+}
+
 </style>
 </head>
 <body class="large"><!-- ← ここを small / medium / large に変更 -->
@@ -246,8 +264,8 @@ footer img { max-width:160px; height:auto; display:inline-block; }
 
 <!-- ▼ 怪異30編集ボタン -->
 <div id="edit-controls" style="text-align:center; margin:20px 0;">
-  <button id="change-image" style="padding:8px 12px; margin:4px;">怪異30の画像を変更する</button>
-  <button id="change-desc" style="padding:8px 12px; margin:4px;">怪異30の説明文を変更する</button>
+  <button id="change-image" 怪異30の画像を変更する</button>
+  <button id="change-desc" 怪異30の説明文を変更する</button>
   <input type="file" id="image-input" accept="image/*" style="display:none;">
 </div>
   
@@ -324,6 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
