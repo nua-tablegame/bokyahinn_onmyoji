@@ -177,7 +177,19 @@ footer img { max-width:160px; height:auto; display:inline-block; }
     padding: 8px;
   }
 }
-  
+
+  /* スマホでの長押し動作を無効化して、カスタムメニューを優先 */
+.card, .card * {
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* 入力系は選択を許可 */
+textarea, input, .player-note {
+  -webkit-user-select: text;
+  user-select: text;
+}
 </style>
 </head>
 <body class="large"><!-- ← ここを small / medium / large に変更 -->
@@ -375,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
