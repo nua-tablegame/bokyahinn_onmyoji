@@ -134,12 +134,6 @@ h2 { text-align:center; margin:14px 0; font-size:1.25rem; }
   color:var(--memo-color);
   height:var(--memo-height);
 }
-<!-- ▼ 怪異30編集ボタン -->
-<div id="edit-controls" style="text-align:center; margin:20px 0;">
-  <button id="change-image" style="padding:8px 12px; margin:4px;">怪異30の画像を変更する</button>
-  <button id="change-desc" style="padding:8px 12px; margin:4px;">怪異30の説明文を変更する</button>
-  <input type="file" id="image-input" accept="image/*" style="display:none;">
-</div>
 
 /* フッター */
 footer { text-align:center; padding:18px 10px; }
@@ -250,6 +244,13 @@ footer img { max-width:160px; height:auto; display:inline-block; }
   <textarea class="player-memo" placeholder="自由にメモを書いてください"></textarea>
 </main>
 
+<!-- ▼ 怪異30編集ボタン -->
+<div id="edit-controls" style="text-align:center; margin:20px 0;">
+  <button id="change-image" style="padding:8px 12px; margin:4px;">怪異30の画像を変更する</button>
+  <button id="change-desc" style="padding:8px 12px; margin:4px;">怪異30の説明文を変更する</button>
+  <input type="file" id="image-input" accept="image/*" style="display:none;">
+</div>
+  
 <footer>
   <!-- 製作者ロゴ：差し替え可 -->
   <img src="images/bokyahinn_logo.png" alt="制作者ロゴ">
@@ -323,6 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
