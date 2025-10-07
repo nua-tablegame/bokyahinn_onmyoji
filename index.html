@@ -187,13 +187,27 @@ footer img { max-width:160px; height:auto; display:inline-block; }
   cursor: pointer;
 }
 
-/* スマホ専用（幅768px以下のとき） */
+/* スマホ用レイアウト調整 */
 @media (max-width: 768px) {
-  #edit-controls button {
-    padding: 18px 28px;  /* さらに押しやすいサイズ */
-    font-size: 1.3rem;
-    width: 90%;          /* 横幅を広げるとタップしやすい */
-    max-width: 320px;    /* 大きすぎ防止 */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* 自動で2〜3列 */
+    gap: 10px;
+    justify-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 180px; /* カード幅を制限 */
+    margin: 0;
+  }
+
+  .card img {
+    width: 100%;
+    height: auto;
+  }
+}
+
   }
 }
 
@@ -358,6 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
