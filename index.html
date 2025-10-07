@@ -267,6 +267,10 @@ footer img { max-width:160px; height:auto; display:inline-block; }
   <button id="change-image"> 怪異30の画像を変更する</button>
   <button id="change-desc"> 怪異30の説明文を変更する</button>
   <input type="file" id="image-input" accept="image/*" style="display:none;">
+  <button onclick="localStorage.removeItem('kaiji30_image');localStorage.removeItem('kaiji30_desc');location.reload();">
+  怪異30をリセット
+</button>
+
 </div>
   
 <footer>
@@ -306,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-  // === 怪異30編集機能 ===
+// === 怪異30編集機能（localStorage対応） ===
 document.addEventListener("DOMContentLoaded", () => {
   const editableImage = document.getElementById("editable-image");
   const editableDesc = document.getElementById("editable-desc");
@@ -314,7 +318,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const changeDescBtn = document.getElementById("change-desc");
   const imageInput = document.getElementById("image-input");
 
-  // 画像変更ボタン
+  // === ① ページ読み込み時に localStorage から復元 ===
+  const savedImage = localStorage.getItem("kaiji30_image");
+  const savedDesc = localStorage.getItem("kaiji30_desc");
+
+  if (savedImage) editableImage.src = savedImage;
+  if (savedDesc) editableDesc.innerText = savedDesc;
+
+  // === ② 画像変更ボタン ===
   changeImageBtn.addEventListener("click", () => {
     imageInput.click();
   });
@@ -324,16 +335,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
-      editableImage.src = event.target.result;
+      const imgData = event.target.result;
+      editableImage.src = imgData;
+      // 保存！
+      localStorage.setItem("kaiji30_image", imgData);
     };
     reader.readAsDataURL(file);
   });
 
-  // 説明文変更ボタン
+  // === ③ 説明文変更ボタン ===
   changeDescBtn.addEventListener("click", () => {
     const newText = prompt("新しい説明文を入力してください:", editableDesc.innerText);
     if (newText !== null) {
       editableDesc.innerText = newText;
+      // 保存！
+      localStorage.setItem("kaiji30_desc", newText);
     }
   });
 });
@@ -342,6 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
