@@ -308,9 +308,37 @@ footer img { max-width:160px; height:auto; display:inline-block; }
 </footer>
 
 <script>
+// === 怪異30編集機能（localStorage対応） ===
 document.addEventListener("DOMContentLoaded", () => {
+  const editableImage = document.getElementById("editable-image");
+  const editableDesc = document.getElementById("editable-desc");
+  const changeImageBtn = document.getElementById("change-image");
+  const changeDescBtn = document.getElementById("change-desc");
+  const imageInput = document.getElementById("image-input");
+
+  // === ① ページ読み込み時に localStorage から復元 ===
+  const savedImage = localStorage.getItem("kaiji30_image");
+  const savedDesc = localStorage.getItem("kaiji30_desc");
+
+  if (savedImage) editableImage.src = savedImage;
+  if (savedDesc) editableDesc.innerText = savedDesc;
+
+  // === ② 画像変更ボタン ===
+  changeImageBtn.addEventListener("click", () => {
+    imageInput.click();
+  });
   const cards = document.querySelectorAll(".card");
   const selectedList = document.getElementById("selected-list");
+   // ✅ この位置でクリックイベントを登録
+  selectedList.addEventListener("click", (e) => {
+    const selectedCard = e.target.closest(".selected-card");
+    if (selectedCard) {
+      const title = selectedCard.dataset.title;
+      selectedCard.remove();
+      const original = Array.from(cards).find(c => c.querySelector("img").alt === title);
+      if (original) original.classList.remove("selected");
+    }
+  });
 
   cards.forEach(card => {
     card.addEventListener("click", () => {
@@ -361,26 +389,6 @@ selectedList.addEventListener("click", (e) => {
   }
 });
 
-// === 怪異30編集機能（localStorage対応） ===
-document.addEventListener("DOMContentLoaded", () => {
-  const editableImage = document.getElementById("editable-image");
-  const editableDesc = document.getElementById("editable-desc");
-  const changeImageBtn = document.getElementById("change-image");
-  const changeDescBtn = document.getElementById("change-desc");
-  const imageInput = document.getElementById("image-input");
-
-  // === ① ページ読み込み時に localStorage から復元 ===
-  const savedImage = localStorage.getItem("kaiji30_image");
-  const savedDesc = localStorage.getItem("kaiji30_desc");
-
-  if (savedImage) editableImage.src = savedImage;
-  if (savedDesc) editableDesc.innerText = savedDesc;
-
-  // === ② 画像変更ボタン ===
-  changeImageBtn.addEventListener("click", () => {
-    imageInput.click();
-  });
-
   imageInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -409,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
