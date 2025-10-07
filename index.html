@@ -66,8 +66,8 @@ h2 { text-align:center; margin:14px 0; font-size:1.25rem; }
 .card {
   display:flex;
   flex-direction:column;
-  width:auto;
-  max-width:240px;
+  width:160px;
+  height:240px;
   cursor:pointer;
   border:2px solid transparent;
   padding:6px;
@@ -191,7 +191,7 @@ footer img { max-width:160px; height:auto; display:inline-block; }
 @media (max-width: 768px) {
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* 自動で2〜3列 */
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* 自動で2〜3列 */
     gap: 10px;
     justify-items: center;
   }
@@ -372,6 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
