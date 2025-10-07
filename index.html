@@ -339,6 +339,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+  // === 選択中エリア内のカードクリックで削除 ===
+selectedList.addEventListener("click", (e) => {
+  const selectedCard = e.target.closest(".selected-card");
+  if (selectedCard) {
+    const title = selectedCard.dataset.title;
+    // 一覧から削除
+    selectedCard.remove();
+    // 元のカードの選択解除
+    const original = Array.from(cards).find(c => c.querySelector("img").alt === title);
+    if (original) original.classList.remove("selected");
+  }
+});
+
 // === 怪異30編集機能（localStorage対応） ===
 document.addEventListener("DOMContentLoaded", () => {
   const editableImage = document.getElementById("editable-image");
@@ -387,6 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
