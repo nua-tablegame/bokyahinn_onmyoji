@@ -338,6 +338,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+  // === クリアボタン ===
+const clearBtn = document.getElementById("clear-selected");
+clearBtn.addEventListener("click", () => {
+  // 一覧を空にする
+  selectedList.innerHTML = "";
+  // 全カードの選択解除
+  cards.forEach(card => card.classList.remove("selected"));
+});
+
 });
   // === 選択中エリア内のカードクリックで削除 ===
 selectedList.addEventListener("click", (e) => {
@@ -400,6 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
 
 
 
